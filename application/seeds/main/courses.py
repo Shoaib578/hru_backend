@@ -5,6 +5,8 @@ from application.models.lectures import Lectures
 from application.schemas.lecture_schema import LectureSchema
 from application.models.owned_courses import OwnedCourses
 from application.schemas.owned_courses_schema import OwnedCourseSchema
+from application.models.links import Links
+from application.schemas.links_schema import LinkSchema
 from sqlalchemy import text
 from flask import jsonify,request
 
@@ -80,3 +82,72 @@ def buy_course():
             "status":"Bought Successfully",
             "course_id": course_id,
         })
+
+
+
+def add_link():
+    link = request.form.get("link")
+    user_id = request.form.get("user_id")
+    course_id = request.form.get("course_id")
+    code = request.form.get("code")
+    new_link = Links(link=link,shared_by=user_id,course_id=course_id,code=code)
+    db.session.add(new_link)
+    db.session.commit()
+    return jsonify({
+        "status":"Link Added",
+        "is_added": True
+    })
+
+def delete_link():
+    link_id = request.args.get("link_id")
+    link = Links.query.get(link_id)
+    db.session.delete(link)
+    db.session.commit()
+    return jsonify({
+        "status":"Link Deleted",
+        "is_deleted": True
+    })
+
+
+def get_all_links():
+    user_id = request.args.get('user_id')
+    links_query = Links.query.filter_by(shared_by=user_id).all()
+    schema = LinkSchema(many=True)
+    links = schema.dump(links_query)
+    print(links)
+    return jsonify({
+        "data":links
+    })
+
+
+
+
+def get_course_by_link_code():
+    code = request.args.get('code')
+    is_loggedin = request.args.get('is_loggedin')
+    query = None
+    
+    if is_loggedin:
+        user_id = request.args.get('user_id')
+
+        query = text("SELECT *,(SELECT count(*) from owned_courses WHERE course_id=courses.course_id) as students_count,(SELECT count(*) FROM owned_courses WHERE course_id=courses.course_id AND owned_courses.owned_by="+str(user_id)+") as is_owned FROM links LEFT JOIN courses on courses.course_id=links.course_id  LEFT JOIN panel_users on panel_users.panel_userid=courses.teacher_id WHERE links.code="+str(code))
+    else:
+        query = text("SELECT *,(SELECT count(*) from owned_courses WHERE course_id=courses.course_id) as students_count FROM links LEFT JOIN courses on courses.course_id=links.course_id  LEFT JOIN panel_users on panel_users.panel_userid=courses.teacher_id  WHERE links.code="+str(code))
+        
+    engine = None
+    with db.engine.connect() as conn:
+
+        engine = conn.execute(query)
+    schema = LinkSchema(many=True)
+    data= schema.dump(engine)
+   
+    lectures = []
+    if data:
+        lectures_query = Lectures.query.filter_by(course_id=data[0]['course_id']).all()
+        lecture_schema = LectureSchema(many=True)
+        lectures = lecture_schema.dump(lectures_query)
+    
+    return jsonify({
+        "course":data,
+        "lectures":lectures
+    })
