@@ -5,12 +5,17 @@ from werkzeug.security import generate_password_hash,check_password_hash
 from application import db
 from application.seeds.utils import save_file
 from application.models.users import Users
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
 
 def register_user():
     email = request.form.get('email')
     password = request.form.get('password')
     name = request.form.get('name')
+    stripe_id = request.form.get('stripe_id')
+    
     
     
 
@@ -25,7 +30,7 @@ def register_user():
 
     else:
       
-        new_user = Users(name=name,email=email,password=hashed_password)
+        new_user = Users(name=name,email=email,password=hashed_password,stripe_id=stripe_id)
         db.session.add(new_user)
         db.session.commit()
         return jsonify({
@@ -108,4 +113,37 @@ def change_password():
         return jsonify({
             "status":"Invalid Old Password",
             "is_updated":False
+        })
+    
+
+def send_mail():
+    email_address = request.form['address']
+    email_subject = request.form['subject']
+    email_message = request.form['message']
+
+    sender_email = 'theshoaibihsan10@gmail.com'
+    sender_password = 'jmfyevkehneojelm'
+    receiver_email = email_address
+
+    message = MIMEMultipart()
+    message['From'] = sender_email
+    message['To'] = receiver_email
+    message['Subject'] = email_subject
+    message.attach(MIMEText(email_message, 'plain'))
+
+    try:
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(sender_email, sender_password)
+        server.sendmail(receiver_email, sender_email, message.as_string())
+        server.quit()
+
+        return jsonify({
+            "status":"Sent Successfully",
+            "is_sent":True
+        })
+    except Exception as e:
+        return jsonify({
+            "status":e,
+            "is_sent":False
         })

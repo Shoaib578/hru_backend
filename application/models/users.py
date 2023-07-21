@@ -9,7 +9,6 @@ class Users(db.Model):
     phone_no = db.Column(db.String(255), nullable=True)
     address = db.Column(db.String(255), nullable=True)
     stripe_id = db.Column(db.String(255), nullable=True)
-
     created_at = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, nullable=True)
 

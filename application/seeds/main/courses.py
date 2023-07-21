@@ -151,3 +151,5 @@ def get_course_by_link_code():
         "course":data,
         "lectures":lectures
     })
+
+

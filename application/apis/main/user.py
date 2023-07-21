@@ -28,3 +28,8 @@ def UpdateUserDetails():
 @user_routes.route('/change_password',methods=['POST'])
 def ChangePassword():
     return user.change_password()
+
+
+@user_routes.route('/send_mail',methods=['POST'])
+def SendMail():
+    return user.send_mail()

@@ -66,6 +66,9 @@ app.register_blueprint(main_coupon_routes,url_prefix='/apis/main/coupons')
 
 
 
+from application.apis.main.wallet import wallet_routes
+app.register_blueprint(wallet_routes,url_prefix='/apis/main/wallet')
+
 
 
 
