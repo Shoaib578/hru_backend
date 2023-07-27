@@ -55,10 +55,10 @@ def create_transfer():
     is_tranfered=False
     
     try:
-       
 
+        
         stripe.Transfer.create(
-        amount=wallet.amount*100,
+        amount=2000,
         currency="usd",
         destination=stripe_id,
         

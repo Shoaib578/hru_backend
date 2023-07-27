@@ -84,6 +84,11 @@ from application.apis.panels.admin.panel_users import admin_panel_user
 app.register_blueprint(admin_panel_user,url_prefix='/apis/admin')
 
 
+from application.apis.panels.admin.pending_withdrawals import admin_pending_withdrawals_routes
+app.register_blueprint(admin_pending_withdrawals_routes,url_prefix='/apis/admin')
+
+
+
 from application.apis.panels.admin.account import admin_account_routes
 app.register_blueprint(admin_account_routes,url_prefix='/apis/admin')
 

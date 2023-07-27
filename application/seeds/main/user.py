@@ -121,8 +121,8 @@ def send_mail():
     email_subject = request.form['subject']
     email_message = request.form['message']
 
-    sender_email = 'theshoaibihsan10@gmail.com'
-    sender_password = 'jmfyevkehneojelm'
+    sender_email = 'staniczaym@gmail.com'
+    sender_password = 'iljmelnkwmadqqiz'
     receiver_email = email_address
 
     message = MIMEMultipart()
