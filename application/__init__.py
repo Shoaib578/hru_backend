@@ -13,7 +13,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = SECRET_KEY
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URI
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-stripe.api_key = "sk_test_51Li9vSLrpfnp4zWJmdpNm8vuzpLLpwbbVGzfytQbeVWeYDE9wXSH48h1Rsufx08gqTyqefTlYhSop6AZJh3vprXJ00xTEddr3r"
+stripe.api_key = "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"
 ma= Marshmallow(app)
 db = SQLAlchemy(app)
 Migrate(app,db)
